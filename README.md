@@ -83,6 +83,7 @@ After installation, open **Codex → Settings → Pets → Refresh**, then selec
 - `previews/` — all nine animation previews, the full contact sheet, and look-direction sheet
 - `qa/` — sanitized validation and direction-review evidence
 - `scripts/validate_package.py` — portable package and checksum validator
+- `scripts/render_previews.py` — regenerates transparent GIFs from the cleaned packaged atlas
 - `install.sh` and `install.ps1` — local installers with checksum verification and safe replacement backups
 - `SHA256SUMS` — hashes for the installable files
 
@@ -95,9 +96,8 @@ python scripts/validate_package.py
 
 ## Release
 
-The `v1.0.0` GitHub release contains an install-only ZIP. Extract its `ado` directory into the Codex `pets` directory, or use one of the repository installers above.
+The `v1.0.1` GitHub release contains an install-only ZIP. Extract its `ado` directory into the Codex `pets` directory, or use one of the repository installers above. The v1.0.1 runtime package is identical to v1.0.0; this release corrects the README GIFs by rendering them from the final despilled atlas.
 
 ## Rights and reuse
 
 The installer scripts, validation script, and repository documentation are available under the [MIT License](LICENSE). The fan artwork and all third-party names, likenesses, trademarks, and associated character elements are excluded from that license; see [FAN-NOTICE.md](FAN-NOTICE.md).
-

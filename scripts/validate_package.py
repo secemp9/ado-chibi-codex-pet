@@ -7,7 +7,7 @@ import hashlib
 import json
 from pathlib import Path
 
-from PIL import Image
+from PIL import Image, ImageSequence
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -15,6 +15,18 @@ PET_DIR = ROOT / "pet" / "ado"
 MANIFEST_PATH = PET_DIR / "pet.json"
 ATLAS_PATH = PET_DIR / "spritesheet.webp"
 CHECKSUM_PATH = ROOT / "SHA256SUMS"
+PREVIEW_DIR = ROOT / "previews"
+PREVIEW_FRAME_COUNTS = {
+    "idle": 6,
+    "running-right": 8,
+    "running-left": 8,
+    "waving": 4,
+    "jumping": 5,
+    "failed": 8,
+    "waiting": 6,
+    "running": 6,
+    "review": 6,
+}
 
 
 def sha256(path: Path) -> str:
@@ -66,9 +78,38 @@ def main() -> None:
         if actual_hash != expected_hash:
             raise SystemExit(f"checksum mismatch for {relative_path}")
 
-    print("Ado Codex pet package validation passed")
+    # Prediction: all nine GIFs have their exact state frame counts and no visible key-green pixels.
+    for state, expected_count in PREVIEW_FRAME_COUNTS.items():
+        preview_path = PREVIEW_DIR / f"{state}.gif"
+        with Image.open(preview_path) as preview:
+            if preview.format != "GIF":
+                raise SystemExit(f"expected GIF preview for {state}, found {preview.format}")
+            if preview.n_frames != expected_count:
+                raise SystemExit(
+                    f"{state} preview needs {expected_count} frames, found {preview.n_frames}"
+                )
+
+            for frame_number, frame in enumerate(ImageSequence.Iterator(preview)):
+                rgba = frame.convert("RGBA")
+                if rgba.size != (192, 208):
+                    raise SystemExit(
+                        f"{state} frame {frame_number} must be 192x208, found {rgba.size}"
+                    )
+                if rgba.getchannel("A").getextrema()[0] != 0:
+                    raise SystemExit(f"{state} frame {frame_number} has no transparent background")
+
+                visible_key_green = sum(
+                    1
+                    for red, green, blue, alpha in rgba.getdata()
+                    if alpha > 0 and red < 80 and green > 120 and blue < 80
+                )
+                if visible_key_green:
+                    raise SystemExit(
+                        f"{state} frame {frame_number} retains {visible_key_green} visible key-green pixels"
+                    )
+
+    print("Ado Codex pet package and preview validation passed")
 
 
 if __name__ == "__main__":
     main()
-
