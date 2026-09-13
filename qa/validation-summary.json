@@ -8,7 +8,7 @@
   },
   "atlas": {
     "file": "pet/ado/spritesheet.webp",
-    "sha256": "6172d72b02059235e6cf3b6a0c8ce6a3c9bce2de18359027c8ebbbc95415b6ad",
+    "sha256": "49b50e8a9a8863d18d49af26c4d11b2fb59a7c4e8eee23b54ce62421b3be3e22",
     "format": "WebP",
     "mode": "RGBA",
     "width": 1536,
@@ -27,15 +27,22 @@
     "blindDirectionValidation": "pass",
     "blindDirectionWarnings": 0,
     "artifactRepair": "pass",
-    "detachedPixelsRemoved": 1905,
-    "idleGreenPixelsRecolored": 312,
+    "replacedRows": [
+      "idle",
+      "failed",
+      "waiting"
+    ],
+    "replacedFrames": 20,
+    "silhouetteBaselineCells": 57,
+    "greenKeyValidation": "pass",
+    "yellowKeyValidation": "pass",
     "visualQa": "pass",
-    "visualQaNote": "Independent review of all nine GIFs at normal size and on a high-contrast background found no green hair halo, frame ghosting, detached side fragments, or neighboring-pose contamination; motion and identity remain coherent."
+    "visualQaNote": "Independent review found all 11 rows identity-consistent and correctly animated; failed and waiting poses are complete and isolated, idle hair has no green or yellow halo, and coalesced GIF playback is ghost-free."
   },
   "reviewedWarnings": [
-    "Stable-slot extraction warnings were visually cleared in the motion previews.",
-    "Detached cross-slot remnants in failed and waiting were removed without changing the primary silhouettes.",
+    "The affected rows were regenerated rather than masked, clearing connected and detached neighboring-pose bleed from the atlas itself.",
+    "README previews reproduce the complete atlas-cell masks and cannot hide defects with preview-only cleanup.",
     "The 292.5 alpha gap is the intentional space between planted legs.",
-    "The 337.5-to-000 numeric wrap outliers show no visible snap, scale pop, reversal, or registration jump."
+    "The 337.5-to-000 numeric diff and area outliers show a visually smooth wrap with stable registration and no reversal."
   ]
 }

@@ -1,83 +1,56 @@
 {
   "ok": true,
+  "release": "v1.0.3",
   "input": "pet/ado/spritesheet.webp",
   "output": "pet/ado/spritesheet.webp",
-  "component_alpha_cutoff": 96,
-  "component_repairs": [
+  "cause": "Stable-slot extraction from overlapping source strips baked neighboring poses into failed and waiting cells; green-key edge contamination remained in late idle hair.",
+  "strategy": "Regenerate each complete affected row with isolated pose gutters, preserve the approved remaining rows and look directions, and despill the two source keys before deterministic assembly.",
+  "replacedRows": [
     {
-      "row": 5,
-      "column": 0,
-      "detached_component_sizes": [
-        9
-      ],
-      "removed_pixels": 20
+      "state": "idle",
+      "row": 0,
+      "frames": 6,
+      "extractionMethod": "components",
+      "edgePixels": 0,
+      "sourceChromaKey": "#FFFF00"
     },
     {
+      "state": "failed",
       "row": 5,
-      "column": 1,
-      "detached_component_sizes": [
-        19,
-        9
-      ],
-      "removed_pixels": 61
+      "frames": 8,
+      "extractionMethod": "components",
+      "edgePixels": 0,
+      "sourceChromaKey": "#FFFF00"
     },
     {
-      "row": 5,
-      "column": 2,
-      "detached_component_sizes": [
-        226,
-        47
-      ],
-      "removed_pixels": 354
-    },
-    {
-      "row": 5,
-      "column": 3,
-      "detached_component_sizes": [
-        528,
-        86,
-        31
-      ],
-      "removed_pixels": 763
-    },
-    {
-      "row": 5,
-      "column": 4,
-      "detached_component_sizes": [
-        162,
-        122
-      ],
-      "removed_pixels": 382
-    },
-    {
+      "state": "waiting",
       "row": 6,
-      "column": 3,
-      "detached_component_sizes": [
-        146
-      ],
-      "removed_pixels": 193
-    },
-    {
-      "row": 6,
-      "column": 5,
-      "detached_component_sizes": [
-        93
-      ],
-      "removed_pixels": 132
+      "frames": 6,
+      "extractionMethod": "components",
+      "edgePixels": 0,
+      "sourceChromaKey": "#FFFF00"
     }
   ],
-  "green_repairs": [
+  "chromaCleanup": [
     {
-      "row": 0,
-      "column": 3,
-      "changed_pixels": 173
+      "scope": "preserved rows and look directions",
+      "sourceChromaKey": "#00FF00",
+      "algorithm": "edge-local chroma-spill suppression",
+      "alphaPreserved": true
     },
     {
-      "row": 0,
-      "column": 4,
-      "changed_pixels": 139
+      "scope": "rows 0, 5, and 6",
+      "sourceChromaKey": "#FFFF00",
+      "algorithm": "edge-local chroma-spill suppression",
+      "changedPixels": 37712,
+      "rejectedPixels": 0,
+      "alphaPreserved": true
     }
   ],
-  "total_removed_pixels": 1905,
-  "total_recolored_pixels": 312
+  "checks": {
+    "greenKeyV2Validation": "pass",
+    "yellowKeyV2Validation": "pass",
+    "silhouetteBaselineCells": 57,
+    "previewMasksMatchAtlas": true
+  }
 }

@@ -82,9 +82,9 @@ After installation, open **Codex → Settings → Pets → Refresh**, then selec
 - `pet/ado/` — the two installable runtime files
 - `previews/` — all nine animation previews, the full contact sheet, and look-direction sheet
 - `qa/` — sanitized validation and direction-review evidence
+- `qa/approved-silhouette-masks.json` — visually approved full-cell masks that reject connected or detached neighboring-pose bleed
 - `scripts/validate_package.py` — portable package and checksum validator
-- `scripts/repair_atlas_artifacts.py` — removes verified detached cell remnants and repairs the two late-idle hair fringes
-- `scripts/render_previews.py` — regenerates transparent GIFs from the cleaned packaged atlas
+- `scripts/render_previews.py` — regenerates transparent GIFs directly from the packaged atlas without preview-only masking or color correction
 - `install.sh` and `install.ps1` — local installers with checksum verification and safe replacement backups
 - `SHA256SUMS` — hashes for the installable files
 
@@ -97,7 +97,7 @@ python scripts/validate_package.py
 
 ## Release
 
-The `v1.0.2` GitHub release contains an install-only ZIP. Extract its `ado` directory into the Codex `pets` directory, or use one of the repository installers above. This release removes detached cross-slot remnants from the `failed` and `waiting` cells, repairs the two late-idle green hair fringes, and renders every README GIF with a single shared palette and an isolated primary sprite mask.
+The `v1.0.3` GitHub release contains an install-only ZIP. Extract its `ado` directory into the Codex `pets` directory, or use one of the repository installers above. This release regenerates the complete `idle`, `failed`, and `waiting` rows with isolated poses and safe gutters, removes green-key spill from preserved artwork, and renders every README GIF directly from the packaged atlas. Validation now compares every standard cell and GIF against visually approved full-cell silhouettes, so connected as well as detached neighboring-pose bleed is rejected.
 
 ## Rights and reuse
 

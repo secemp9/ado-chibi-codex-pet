@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Render artifact-free GIF previews from the final cleaned Codex pet atlas."""
+"""Render transparent GIF previews from the final cleaned Codex pet atlas."""
 
 from __future__ import annotations
 
@@ -27,73 +27,6 @@ ROW_DURATIONS = {
     "running": (7, [120, 120, 120, 120, 120, 220]),
     "review": (8, [150, 150, 150, 150, 150, 280]),
 }
-
-
-def connected_components(alpha: Image.Image) -> list[list[int]]:
-    width, height = alpha.size
-    data = alpha.tobytes()
-    visited = bytearray(width * height)
-    components: list[list[int]] = []
-
-    # Prediction: every visible preview pixel belongs to one four-connected component.
-    for start, value in enumerate(data):
-        if value < ALPHA_CUTOFF or visited[start]:
-            continue
-        stack = [start]
-        visited[start] = 1
-        component: list[int] = []
-        while stack:
-            current = stack.pop()
-            component.append(current)
-            x = current % width
-            neighbors = (
-                current - 1 if x else -1,
-                current + 1 if x + 1 < width else -1,
-                current - width if current >= width else -1,
-                current + width if current + width < width * height else -1,
-            )
-            for neighbor in neighbors:
-                if neighbor >= 0 and data[neighbor] >= ALPHA_CUTOFF and not visited[neighbor]:
-                    visited[neighbor] = 1
-                    stack.append(neighbor)
-        components.append(component)
-    return components
-
-
-def isolate_primary_sprite(source: Image.Image) -> Image.Image:
-    rgba = source.convert("RGBA")
-    alpha = rgba.getchannel("A")
-    components = connected_components(alpha)
-    if not components:
-        return rgba
-
-    primary = max(components, key=len)
-    primary_mask = Image.new("L", rgba.size, 0)
-    mask_pixels = primary_mask.load()
-    # Prediction: the largest thresholded component is Ado; smaller components are
-    # cross-slot remnants and must never appear in a standalone animation frame.
-    for pixel_index in primary:
-        mask_pixels[pixel_index % rgba.width, pixel_index // rgba.width] = 255
-    rgba.putalpha(primary_mask)
-    return rgba
-
-
-def shift_green_fringe_to_teal(source: Image.Image) -> Image.Image:
-    rgba = source.convert("RGBA")
-    pixels = rgba.load()
-    # Prediction: the confirmed late-idle defect is the green-dominant subset of
-    # the hair edge, so a blueward hue correction preserves the intended teal hair.
-    for y in range(rgba.height):
-        for x in range(rgba.width):
-            red, green, blue, alpha = pixels[x, y]
-            if alpha and green > max(red * 1.5, blue * 1.12) and green > 45:
-                pixels[x, y] = (
-                    red,
-                    green,
-                    max(blue, min(255, round(green * 1.35))),
-                    alpha,
-                )
-    return rgba
 
 
 def make_shared_palette(frames: list[Image.Image]) -> Image.Image:
@@ -158,9 +91,7 @@ def main() -> None:
             left = column * CELL_WIDTH
             top = row * CELL_HEIGHT
             frame = atlas.crop((left, top, left + CELL_WIDTH, top + CELL_HEIGHT))
-            if state == "idle" and column in {3, 4}:
-                frame = shift_green_fringe_to_teal(frame)
-            rgba_frames.append(isolate_primary_sprite(frame))
+            rgba_frames.append(frame)
 
         palette = make_shared_palette(rgba_frames)
         frames = [gif_frame(frame, palette) for frame in rgba_frames]

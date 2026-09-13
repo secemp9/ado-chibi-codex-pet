@@ -3,11 +3,12 @@
 
 from __future__ import annotations
 
+import argparse
 import hashlib
 import json
 from pathlib import Path
 
-from PIL import Image, ImageSequence
+from PIL import Image, ImageFilter, ImageSequence
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -16,9 +17,11 @@ MANIFEST_PATH = PET_DIR / "pet.json"
 ATLAS_PATH = PET_DIR / "spritesheet.webp"
 CHECKSUM_PATH = ROOT / "SHA256SUMS"
 PREVIEW_DIR = ROOT / "previews"
+SILHOUETTE_BASELINE_PATH = ROOT / "qa" / "approved-silhouette-masks.json"
 CELL_WIDTH = 192
 CELL_HEIGHT = 208
 PREVIEW_ALPHA_CUTOFF = 96
+EDGE_MARGIN = 4
 PREVIEW_ROWS = {
     "idle": (0, [280, 110, 110, 140, 140, 320]),
     "running-right": (1, [120, 120, 120, 120, 120, 120, 120, 220]),
@@ -38,6 +41,50 @@ def sha256(path: Path) -> str:
         while chunk := handle.read(1024 * 1024):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+def sha256_bytes(data: bytes) -> str:
+    return hashlib.sha256(data).hexdigest()
+
+
+def near_key_color(
+    red: int,
+    green: int,
+    blue: int,
+    key: tuple[int, int, int],
+    threshold: int = 96,
+) -> bool:
+    return (
+        (red - key[0]) ** 2
+        + (green - key[1]) ** 2
+        + (blue - key[2]) ** 2
+        <= threshold**2
+    )
+
+
+def key_leak_count(image: Image.Image, key: tuple[int, int, int]) -> int:
+    return sum(
+        1
+        for red, green, blue, alpha in image.convert("RGBA").getdata()
+        if alpha > 16 and near_key_color(red, green, blue, key, threshold=36)
+    )
+
+
+def key_fringe_count(image: Image.Image, key: tuple[int, int, int]) -> int:
+    rgba = image.convert("RGBA")
+    alpha = rgba.getchannel("A")
+    visible = [value > 0 for value in alpha.getdata()]
+    transparent = Image.new("L", alpha.size)
+    transparent.putdata([255 if not value else 0 for value in visible])
+    nearby_transparency = transparent.filter(ImageFilter.MaxFilter(5))
+    return sum(
+        alpha_value > 16
+        and nearby > 0
+        and near_key_color(red, green, blue, key, threshold=96)
+        for (red, green, blue, _alpha), alpha_value, nearby in zip(
+            rgba.getdata(), alpha.getdata(), nearby_transparency.getdata()
+        )
+    )
 
 
 def connected_components(alpha: Image.Image, cutoff: int) -> list[list[int]]:
@@ -71,19 +118,47 @@ def connected_components(alpha: Image.Image, cutoff: int) -> list[list[int]]:
     return components
 
 
-def component_mask(alpha: Image.Image, cutoff: int) -> bytes:
-    components = connected_components(alpha, cutoff)
-    if not components:
-        return bytes(alpha.width * alpha.height)
-    primary = max(components, key=len)
-    mask = bytearray(alpha.width * alpha.height)
-    # Prediction: the primary sprite mask contains exactly the largest atlas component.
-    for pixel_index in primary:
-        mask[pixel_index] = 255
-    return bytes(mask)
+def threshold_mask(alpha: Image.Image, cutoff: int) -> bytes:
+    return bytes(255 if value >= cutoff else 0 for value in alpha.tobytes())
+
+
+def mask_bbox(mask: bytes) -> list[int] | None:
+    visible = [index for index, value in enumerate(mask) if value]
+    if not visible:
+        return None
+    xs = [index % CELL_WIDTH for index in visible]
+    ys = [index // CELL_WIDTH for index in visible]
+    return [min(xs), min(ys), max(xs), max(ys)]
+
+
+def standard_cell_records(atlas: Image.Image) -> dict[str, dict[str, object]]:
+    records: dict[str, dict[str, object]] = {}
+    # Prediction: the nine standard rows contain the exact 57 populated cells in PREVIEW_ROWS.
+    for state, (row, durations) in PREVIEW_ROWS.items():
+        for column in range(len(durations)):
+            left = column * CELL_WIDTH
+            top = row * CELL_HEIGHT
+            cell = atlas.crop((left, top, left + CELL_WIDTH, top + CELL_HEIGHT))
+            mask = threshold_mask(cell.getchannel("A"), PREVIEW_ALPHA_CUTOFF)
+            records[f"{state}:{column}"] = {
+                "row": row,
+                "column": column,
+                "visiblePixels": sum(1 for value in mask if value),
+                "bbox": mask_bbox(mask),
+                "maskSha256": sha256_bytes(mask),
+            }
+    return records
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--write-mask-baseline",
+        action="store_true",
+        help="write the visually approved standard-cell silhouette baseline and exit",
+    )
+    args = parser.parse_args()
+
     manifest = json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
     expected_manifest = {
         "id": "ado",
@@ -107,6 +182,19 @@ def main() -> None:
             raise SystemExit("atlas has no transparent pixels")
         atlas = opened.convert("RGBA")
 
+    if args.write_mask_baseline:
+        baseline = {
+            "schemaVersion": 1,
+            "alphaCutoff": PREVIEW_ALPHA_CUTOFF,
+            "purpose": "Visually approved standard-row masks; prevents connected or detached cross-slot bleed from returning.",
+            "cells": standard_cell_records(atlas),
+        }
+        SILHOUETTE_BASELINE_PATH.write_text(
+            json.dumps(baseline, indent=2) + "\n", encoding="utf-8"
+        )
+        print(f"wrote {SILHOUETTE_BASELINE_PATH}")
+        return
+
     expected_hashes: dict[str, str] = {}
     # Prediction: SHA256SUMS contains exactly the two runtime files named below.
     for line in CHECKSUM_PATH.read_text(encoding="utf-8").splitlines():
@@ -125,8 +213,24 @@ def main() -> None:
         if actual_hash != expected_hash:
             raise SystemExit(f"checksum mismatch for {relative_path}")
 
-    # Prediction: each used standard atlas cell has one primary sprite and no detached
-    # component large enough to be a visible cross-slot remnant.
+    baseline = json.loads(SILHOUETTE_BASELINE_PATH.read_text(encoding="utf-8"))
+    if baseline.get("alphaCutoff") != PREVIEW_ALPHA_CUTOFF:
+        raise SystemExit("approved silhouette baseline uses the wrong alpha cutoff")
+    expected_records = baseline.get("cells")
+    actual_records = standard_cell_records(atlas)
+    if expected_records != actual_records:
+        changed = sorted(
+            key
+            for key in set(expected_records or {}) | set(actual_records)
+            if (expected_records or {}).get(key) != actual_records.get(key)
+        )
+        raise SystemExit(
+            "standard-cell silhouettes differ from the visually approved baseline: "
+            + ", ".join(changed)
+        )
+
+    # Prediction: each used standard atlas cell has one complete sprite, four pixels
+    # of safe outer clearance, and no visible green- or yellow-key contamination.
     for state, (row, durations) in PREVIEW_ROWS.items():
         for column in range(len(durations)):
             left = column * CELL_WIDTH
@@ -140,20 +244,41 @@ def main() -> None:
                     f"{state} atlas cell {column} has detached visible components: {sizes}"
                 )
 
-            if state == "idle" and column in {3, 4}:
-                green_fringe = sum(
-                    1
-                    for red, green, blue, alpha_value in cell.getdata()
-                    if alpha_value
-                    and green > max(red * 1.5, blue * 1.12)
-                    and green > 45
+            mask = threshold_mask(cell.getchannel("A"), PREVIEW_ALPHA_CUTOFF)
+            edge_pixels = sum(
+                1
+                for index, value in enumerate(mask)
+                if value
+                and (
+                    index % CELL_WIDTH < EDGE_MARGIN
+                    or index % CELL_WIDTH >= CELL_WIDTH - EDGE_MARGIN
+                    or index // CELL_WIDTH < EDGE_MARGIN
+                    or index // CELL_WIDTH >= CELL_HEIGHT - EDGE_MARGIN
                 )
-                if green_fringe:
-                    raise SystemExit(
-                        f"idle atlas cell {column} retains {green_fringe} green-fringe pixels"
-                    )
+            )
+            if edge_pixels:
+                raise SystemExit(
+                    f"{state} atlas cell {column} has {edge_pixels} visible pixels inside the {EDGE_MARGIN}px safety margin"
+                )
 
-    # Prediction: all nine GIFs match their source-cell primary masks, timings, and transparency.
+            green_leaks = key_leak_count(cell, (0, 255, 0))
+            green_fringe = key_fringe_count(cell, (0, 255, 0))
+            yellow_leaks = key_leak_count(cell, (255, 255, 0))
+            yellow_fringe = key_fringe_count(cell, (255, 255, 0))
+            if (
+                green_leaks > 400
+                or yellow_leaks > 400
+                or green_fringe
+                or yellow_fringe
+            ):
+                raise SystemExit(
+                    f"{state} atlas cell {column} retains key-color contamination: "
+                    f"green_leaks={green_leaks}, green_fringe={green_fringe}, "
+                    f"yellow_leaks={yellow_leaks}, yellow_fringe={yellow_fringe}"
+                )
+
+    # Prediction: all nine GIFs reproduce their complete source-cell masks, timings,
+    # and transparency without a preview-only cleanup hiding atlas defects.
     for state, (row, durations) in PREVIEW_ROWS.items():
         expected_count = len(durations)
         preview_path = PREVIEW_DIR / f"{state}.gif"
@@ -183,7 +308,7 @@ def main() -> None:
                 left = frame_number * CELL_WIDTH
                 top = row * CELL_HEIGHT
                 source_cell = atlas.crop((left, top, left + CELL_WIDTH, top + CELL_HEIGHT))
-                expected_mask = component_mask(
+                expected_mask = threshold_mask(
                     source_cell.getchannel("A"), PREVIEW_ALPHA_CUTOFF
                 )
                 actual_mask = bytes(
@@ -196,38 +321,37 @@ def main() -> None:
                 )
                 if mismatched_mask_pixels:
                     raise SystemExit(
-                        f"{state} frame {frame_number} differs from its primary atlas mask "
+                        f"{state} frame {frame_number} differs from its complete atlas mask "
                         f"at {mismatched_mask_pixels} pixels"
                     )
 
                 output_components = connected_components(rgba.getchannel("A"), 1)
-                if len(output_components) != 1:
+                output_sizes = sorted(
+                    (len(component) for component in output_components), reverse=True
+                )
+                visible_output_remnants = [
+                    size for size in output_sizes[1:] if size >= 8
+                ]
+                if not output_sizes or visible_output_remnants:
                     raise SystemExit(
-                        f"{state} frame {frame_number} has {len(output_components)} visible components"
+                        f"{state} frame {frame_number} has detached visible components: {output_sizes}"
                     )
 
-                visible_key_green = sum(
-                    1
-                    for red, green, blue, alpha in rgba.getdata()
-                    if alpha > 0 and red < 80 and green > 120 and blue < 80
-                )
+                visible_key_green = key_leak_count(
+                    rgba, (0, 255, 0)
+                ) + key_fringe_count(rgba, (0, 255, 0))
                 if visible_key_green:
                     raise SystemExit(
                         f"{state} frame {frame_number} retains {visible_key_green} visible key-green pixels"
                     )
 
-                if state == "idle" and frame_number in {3, 4}:
-                    green_fringe = sum(
-                        1
-                        for red, green, blue, alpha_value in rgba.getdata()
-                        if alpha_value
-                        and green > max(red * 1.5, blue * 1.12)
-                        and green > 45
+                visible_key_yellow = key_leak_count(
+                    rgba, (255, 255, 0)
+                ) + key_fringe_count(rgba, (255, 255, 0))
+                if visible_key_yellow:
+                    raise SystemExit(
+                        f"{state} frame {frame_number} retains {visible_key_yellow} visible key-yellow pixels"
                     )
-                    if green_fringe:
-                        raise SystemExit(
-                            f"idle preview frame {frame_number} retains {green_fringe} green-fringe pixels"
-                        )
 
     print("Ado Codex pet package and preview validation passed")
 
