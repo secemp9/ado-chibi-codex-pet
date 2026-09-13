@@ -97,7 +97,7 @@ python scripts/validate_package.py
 
 ## Release
 
-The `v1.0.3` GitHub release contains an install-only ZIP. Extract its `ado` directory into the Codex `pets` directory, or use one of the repository installers above. This release regenerates the complete `idle`, `failed`, and `waiting` rows with isolated poses and safe gutters, removes green-key spill from preserved artwork, and renders every README GIF directly from the packaged atlas. Validation now compares every standard cell and GIF against visually approved full-cell silhouettes, so connected as well as detached neighboring-pose bleed is rejected.
+The `v1.0.4` GitHub release contains an install-only ZIP. Extract its `ado` directory into the Codex `pets` directory, or use one of the repository installers above. It preserves the clean isolated artwork from v1.0.3 while correcting the `failed` animation's middle crouching poses: frames 5–7 now retain the coherent source strip's stable scale instead of being independently enlarged to fill their cells. The first four poses, final face-down pose, and every other atlas cell remain unchanged.
 
 ## Rights and reuse
 

@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0.4
+
+- Corrected unintended growth in the three middle crouching poses of the `failed` animation by using stable-slot extraction from the same coherent generated row.
+- Preserved the first four failed poses, final face-down pose, and every other atlas cell byte-for-byte.
+- Regenerated the failed GIF and full contact sheet, then passed deterministic validation and independent playback review across both affected transitions.
+
 ## v1.0.3
 
 - Regenerated the complete `idle`, `failed`, and `waiting` rows with separated poses, visible gutters, and safe cell margins instead of attempting to mask contaminated cells.

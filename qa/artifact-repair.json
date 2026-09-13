@@ -1,6 +1,6 @@
 {
   "ok": true,
-  "release": "v1.0.3",
+  "release": "v1.0.4",
   "input": "pet/ado/spritesheet.webp",
   "output": "pet/ado/spritesheet.webp",
   "cause": "Stable-slot extraction from overlapping source strips baked neighboring poses into failed and waiting cells; green-key edge contamination remained in late idle hair.",
@@ -31,6 +31,37 @@
       "sourceChromaKey": "#FFFF00"
     }
   ],
+  "followupScaleRepair": {
+    "cause": "Per-component extraction in v1.0.3 independently enlarged the crouching poses to nearly fill each cell, creating a visible size pop despite the coherent source strip having stable scale.",
+    "state": "failed",
+    "row": 5,
+    "columns": [
+      4,
+      5,
+      6
+    ],
+    "preservedColumns": [
+      0,
+      1,
+      2,
+      3,
+      7
+    ],
+    "source": "same coherent generated failed row used by v1.0.3",
+    "extractionMethod": "stable-slots",
+    "beforeBboxWidths": [
+      173,
+      181,
+      182
+    ],
+    "afterBboxWidths": [
+      136,
+      125,
+      138
+    ],
+    "edgePixels": 0,
+    "independentVisualQa": "pass"
+  },
   "chromaCleanup": [
     {
       "scope": "preserved rows and look directions",
@@ -51,6 +82,11 @@
     "greenKeyV2Validation": "pass",
     "yellowKeyV2Validation": "pass",
     "silhouetteBaselineCells": 57,
-    "previewMasksMatchAtlas": true
+    "previewMasksMatchAtlas": true,
+    "onlyFailedColumnsChanged": [
+      4,
+      5,
+      6
+    ]
   }
 }

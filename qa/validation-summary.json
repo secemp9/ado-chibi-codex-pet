@@ -8,7 +8,7 @@
   },
   "atlas": {
     "file": "pet/ado/spritesheet.webp",
-    "sha256": "49b50e8a9a8863d18d49af26c4d11b2fb59a7c4e8eee23b54ce62421b3be3e22",
+    "sha256": "c15388ff87e4c6f73669681b4aaef8ce19750de6b2c02e96e58462453b917ac8",
     "format": "WebP",
     "mode": "RGBA",
     "width": 1536,
@@ -36,12 +36,19 @@
     "silhouetteBaselineCells": 57,
     "greenKeyValidation": "pass",
     "yellowKeyValidation": "pass",
+    "failedScaleNormalization": "pass",
+    "failedStableSlotColumns": [
+      4,
+      5,
+      6
+    ],
     "visualQa": "pass",
-    "visualQaNote": "Independent review found all 11 rows identity-consistent and correctly animated; failed and waiting poses are complete and isolated, idle hair has no green or yellow halo, and coalesced GIF playback is ghost-free."
+    "visualQaNote": "Independent review confirmed that failed frames 5–7 preserve natural head and body scale through both adjacent transitions, with no visible size pop, clipping, bleed, halo, or identity drift; all unchanged rows remain acceptable."
   },
   "reviewedWarnings": [
     "The affected rows were regenerated rather than masked, clearing connected and detached neighboring-pose bleed from the atlas itself.",
     "README previews reproduce the complete atlas-cell masks and cannot hide defects with preview-only cleanup.",
+    "Stable-slot extraction is accepted for failed columns 4–6 because the coherent source row has clean gutters and playback is stable and unclipped.",
     "The 292.5 alpha gap is the intentional space between planted legs.",
     "The 337.5-to-000 numeric diff and area outliers show a visually smooth wrap with stable registration and no reversal."
   ]

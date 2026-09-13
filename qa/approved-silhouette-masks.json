@@ -426,38 +426,38 @@
     "failed:4": {
       "row": 5,
       "column": 4,
-      "visiblePixels": 25058,
+      "visiblePixels": 15078,
       "bbox": [
-        9,
-        5,
-        181,
-        202
+        28,
+        45,
+        163,
+        198
       ],
-      "maskSha256": "adf7aa58fc6c3149134f36ca1094993936025668377c250653e42695f098c134"
+      "maskSha256": "58a5a46bd5f22518a0f65b9c9b104183bf4ea2b1607ab298f82187bb1b356964"
     },
     "failed:5": {
       "row": 5,
       "column": 5,
-      "visiblePixels": 26711,
+      "visiblePixels": 12666,
       "bbox": [
-        5,
-        5,
-        185,
-        202
+        33,
+        62,
+        157,
+        198
       ],
-      "maskSha256": "e334da252550b144adc30103690f4e2e5f1e44eb5872f91c2ec8224f200788e9"
+      "maskSha256": "68ecc1524b709669f1271b906fb55d163545c0f4540c75a3262afbfd59af2c01"
     },
     "failed:6": {
       "row": 5,
       "column": 6,
-      "visiblePixels": 19171,
+      "visiblePixels": 11009,
       "bbox": [
-        5,
-        30,
-        186,
-        176
+        27,
+        80,
+        164,
+        191
       ],
-      "maskSha256": "33f9acbb2a1da9c2a41de6b2b276b0e262bb9a653055ed4e12901335f4790bc7"
+      "maskSha256": "fca459e9cbf00f6ab36f9014525ba82b9cc30c5b50fb6b8ec6200059e1b62df6"
     },
     "failed:7": {
       "row": 5,

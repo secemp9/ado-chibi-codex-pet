@@ -413,7 +413,7 @@
       "row": 5,
       "column": 4,
       "used": true,
-      "nontransparent_pixels": 26111,
+      "nontransparent_pixels": 16111,
       "opaque_chroma_key_pixels": 0,
       "chroma_fringe_pixels": 0
     },
@@ -422,8 +422,8 @@
       "row": 5,
       "column": 5,
       "used": true,
-      "nontransparent_pixels": 27677,
-      "opaque_chroma_key_pixels": 1,
+      "nontransparent_pixels": 13509,
+      "opaque_chroma_key_pixels": 0,
       "chroma_fringe_pixels": 0
     },
     {
@@ -431,7 +431,7 @@
       "row": 5,
       "column": 6,
       "used": true,
-      "nontransparent_pixels": 19894,
+      "nontransparent_pixels": 11774,
       "opaque_chroma_key_pixels": 0,
       "chroma_fringe_pixels": 0
     },
