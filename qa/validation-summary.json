@@ -1,0 +1,38 @@
+{
+  "ok": true,
+  "pet": {
+    "id": "ado",
+    "displayName": "Ado",
+    "description": "A dramatic chibi singer pet with a mischievous streak and an expressive emotional range.",
+    "spriteVersionNumber": 2
+  },
+  "atlas": {
+    "file": "pet/ado/spritesheet.webp",
+    "sha256": "bc33beb55061f84251dd0b0619ff0fa024c5b6caba2cbfabe0ad99dee35ed18b",
+    "format": "WebP",
+    "mode": "RGBA",
+    "width": 1536,
+    "height": 2288,
+    "columns": 8,
+    "rows": 11,
+    "cellWidth": 192,
+    "cellHeight": 208,
+    "standardAnimationRows": 9,
+    "lookDirections": 16
+  },
+  "quality": {
+    "atlasValidation": "pass",
+    "chromaDespill": "pass",
+    "transparentRgbResiduePixels": 0,
+    "blindDirectionValidation": "pass",
+    "blindDirectionWarnings": 0,
+    "visualQa": "pass",
+    "visualQaNote": "All 11 rows preserve Ado's chibi identity, complete connected silhouettes, transparent backgrounds, stable scale and baselines, correct state motion, and a broad emotional range."
+  },
+  "reviewedWarnings": [
+    "Stable-slot extraction warnings were visually cleared in the motion previews.",
+    "The 292.5 alpha gap is the intentional space between planted legs.",
+    "The 337.5-to-000 numeric wrap outliers show no visible snap, scale pop, reversal, or registration jump."
+  ]
+}
+

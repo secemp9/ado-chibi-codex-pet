@@ -1,0 +1,124 @@
+{
+  "ok": true,
+  "visual_qa": "pass",
+  "qa_note": "All 11 rows preserve Ado's chibi identity, connected silhouettes, stable registration, correct state motion, and broad emotional range.",
+  "directions": [
+    {
+      "degree": "000",
+      "verdict": "pass",
+      "expected": "up",
+      "observed": "up",
+      "reason": "Broadly frontal face with pupils and chin aimed toward the top edge."
+    },
+    {
+      "degree": "022.5",
+      "verdict": "pass",
+      "expected": "up-right",
+      "observed": "up-right",
+      "reason": "Nose and facial plane shift screen-right while pupils remain raised."
+    },
+    {
+      "degree": "045",
+      "verdict": "pass",
+      "expected": "up-right",
+      "observed": "up-right",
+      "reason": "Clear screen-right head turn with upward eye placement."
+    },
+    {
+      "degree": "067.5",
+      "verdict": "pass",
+      "expected": "up-right",
+      "observed": "up-right",
+      "reason": "Strong screen-right profile with a visibly raised gaze."
+    },
+    {
+      "degree": "090",
+      "verdict": "pass",
+      "expected": "right",
+      "observed": "right",
+      "reason": "Unmistakable right-facing nose, facial plane, and profile."
+    },
+    {
+      "degree": "112.5",
+      "verdict": "pass",
+      "expected": "down-right",
+      "observed": "down-right",
+      "reason": "Right-facing profile with lowered pupils and chin."
+    },
+    {
+      "degree": "135",
+      "verdict": "pass",
+      "expected": "down-right",
+      "observed": "down-right",
+      "reason": "Face remains screen-right while head pitch and eyes descend."
+    },
+    {
+      "degree": "157.5",
+      "verdict": "pass",
+      "expected": "down-right",
+      "observed": "down-right",
+      "reason": "Subtle rightward facial edge accompanies the dominant downward gaze."
+    },
+    {
+      "degree": "180",
+      "verdict": "pass",
+      "expected": "down",
+      "observed": "down",
+      "reason": "Broadly frontal bowed head with unmistakably downcast eyes."
+    },
+    {
+      "degree": "202.5",
+      "verdict": "pass",
+      "expected": "down-left",
+      "observed": "down-left",
+      "reason": "Facial plane shifts screen-left while pupils and chin remain lowered."
+    },
+    {
+      "degree": "225",
+      "verdict": "pass",
+      "expected": "down-left",
+      "observed": "down-left",
+      "reason": "Clear leftward yaw with lowered head and pupil placement."
+    },
+    {
+      "degree": "247.5",
+      "verdict": "pass",
+      "expected": "down-left",
+      "observed": "down-left",
+      "reason": "Strong screen-left profile combined with a lowered gaze."
+    },
+    {
+      "degree": "270",
+      "verdict": "pass",
+      "expected": "left",
+      "observed": "left",
+      "reason": "Unmistakable left-facing nose, facial plane, and profile."
+    },
+    {
+      "degree": "292.5",
+      "verdict": "pass",
+      "expected": "up-left",
+      "observed": "up-left",
+      "reason": "Left-facing profile with raised pupils and chin; the measured alpha gap is the intentional space between planted legs."
+    },
+    {
+      "degree": "315",
+      "verdict": "pass",
+      "expected": "up-left",
+      "observed": "up-left",
+      "reason": "Clear screen-left head turn with upward eye placement."
+    },
+    {
+      "degree": "337.5",
+      "verdict": "pass",
+      "expected": "up-left",
+      "observed": "up-left",
+      "reason": "Subtle leftward facial shift accompanies the dominant upward gaze without a visible wrap snap."
+    }
+  ],
+  "review_warnings": [
+    "The continuity tool's 292.5 alpha-gap warning is the intentional gap between planted legs.",
+    "The 337.5-to-000 numeric wrap outliers show no visible scale pop, registration jump, or reversal."
+  ],
+  "repair_rows": []
+}
