@@ -83,6 +83,7 @@ After installation, open **Codex → Settings → Pets → Refresh**, then selec
 - `previews/` — all nine animation previews, the full contact sheet, and look-direction sheet
 - `qa/` — sanitized validation and direction-review evidence
 - `scripts/validate_package.py` — portable package and checksum validator
+- `scripts/repair_atlas_artifacts.py` — removes verified detached cell remnants and repairs the two late-idle hair fringes
 - `scripts/render_previews.py` — regenerates transparent GIFs from the cleaned packaged atlas
 - `install.sh` and `install.ps1` — local installers with checksum verification and safe replacement backups
 - `SHA256SUMS` — hashes for the installable files
@@ -96,7 +97,7 @@ python scripts/validate_package.py
 
 ## Release
 
-The `v1.0.1` GitHub release contains an install-only ZIP. Extract its `ado` directory into the Codex `pets` directory, or use one of the repository installers above. The v1.0.1 runtime package is identical to v1.0.0; this release corrects the README GIFs by rendering them from the final despilled atlas.
+The `v1.0.2` GitHub release contains an install-only ZIP. Extract its `ado` directory into the Codex `pets` directory, or use one of the repository installers above. This release removes detached cross-slot remnants from the `failed` and `waiting` cells, repairs the two late-idle green hair fringes, and renders every README GIF with a single shared palette and an isolated primary sprite mask.
 
 ## Rights and reuse
 

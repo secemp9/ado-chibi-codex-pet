@@ -8,7 +8,7 @@
   },
   "atlas": {
     "file": "pet/ado/spritesheet.webp",
-    "sha256": "bc33beb55061f84251dd0b0619ff0fa024c5b6caba2cbfabe0ad99dee35ed18b",
+    "sha256": "6172d72b02059235e6cf3b6a0c8ce6a3c9bce2de18359027c8ebbbc95415b6ad",
     "format": "WebP",
     "mode": "RGBA",
     "width": 1536,
@@ -26,13 +26,16 @@
     "transparentRgbResiduePixels": 0,
     "blindDirectionValidation": "pass",
     "blindDirectionWarnings": 0,
+    "artifactRepair": "pass",
+    "detachedPixelsRemoved": 1905,
+    "idleGreenPixelsRecolored": 312,
     "visualQa": "pass",
-    "visualQaNote": "All 11 rows preserve Ado's chibi identity, complete connected silhouettes, transparent backgrounds, stable scale and baselines, correct state motion, and a broad emotional range."
+    "visualQaNote": "Independent review of all nine GIFs at normal size and on a high-contrast background found no green hair halo, frame ghosting, detached side fragments, or neighboring-pose contamination; motion and identity remain coherent."
   },
   "reviewedWarnings": [
     "Stable-slot extraction warnings were visually cleared in the motion previews.",
+    "Detached cross-slot remnants in failed and waiting were removed without changing the primary silhouettes.",
     "The 292.5 alpha gap is the intentional space between planted legs.",
     "The 337.5-to-000 numeric wrap outliers show no visible snap, scale pop, reversal, or registration jump."
   ]
 }
-

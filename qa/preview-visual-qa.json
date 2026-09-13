@@ -1,0 +1,16 @@
+{
+  "ok": true,
+  "review": "independent final visual QA",
+  "surfaces": [
+    "normal-size GIF playback",
+    "high-contrast magenta background",
+    "full 8x11 contact sheet"
+  ],
+  "animationsReviewed": 9,
+  "greenHairHalo": "not observed",
+  "frameGhosting": "not observed",
+  "detachedSideFragments": "not observed",
+  "neighboringPoseContamination": "not observed",
+  "motionAndIdentity": "coherent",
+  "problemFrames": []
+}

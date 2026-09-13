@@ -1,0 +1,83 @@
+{
+  "ok": true,
+  "input": "pet/ado/spritesheet.webp",
+  "output": "pet/ado/spritesheet.webp",
+  "component_alpha_cutoff": 96,
+  "component_repairs": [
+    {
+      "row": 5,
+      "column": 0,
+      "detached_component_sizes": [
+        9
+      ],
+      "removed_pixels": 20
+    },
+    {
+      "row": 5,
+      "column": 1,
+      "detached_component_sizes": [
+        19,
+        9
+      ],
+      "removed_pixels": 61
+    },
+    {
+      "row": 5,
+      "column": 2,
+      "detached_component_sizes": [
+        226,
+        47
+      ],
+      "removed_pixels": 354
+    },
+    {
+      "row": 5,
+      "column": 3,
+      "detached_component_sizes": [
+        528,
+        86,
+        31
+      ],
+      "removed_pixels": 763
+    },
+    {
+      "row": 5,
+      "column": 4,
+      "detached_component_sizes": [
+        162,
+        122
+      ],
+      "removed_pixels": 382
+    },
+    {
+      "row": 6,
+      "column": 3,
+      "detached_component_sizes": [
+        146
+      ],
+      "removed_pixels": 193
+    },
+    {
+      "row": 6,
+      "column": 5,
+      "detached_component_sizes": [
+        93
+      ],
+      "removed_pixels": 132
+    }
+  ],
+  "green_repairs": [
+    {
+      "row": 0,
+      "column": 3,
+      "changed_pixels": 173
+    },
+    {
+      "row": 0,
+      "column": 4,
+      "changed_pixels": 139
+    }
+  ],
+  "total_removed_pixels": 1905,
+  "total_recolored_pixels": 312
+}
